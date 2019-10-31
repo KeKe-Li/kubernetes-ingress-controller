@@ -3,9 +3,10 @@ package watcher
 import (
 	"context"
 	"crypto/tls"
-	"github.com/chanxuehong/log"
 	"sync"
 	"time"
+
+	"github.com/chanxuehong/log"
 
 	extensionsv1beta1 "k8s.io/api/extensions/v1beta1"
 	"k8s.io/apimachinery/pkg/labels"

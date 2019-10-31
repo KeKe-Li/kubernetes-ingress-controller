@@ -11,7 +11,7 @@ import (
 	"kubernetes-ingress-controller/logic/watcher"
 
 	extensionsv1beta1 "k8s.io/api/extensions/v1beta1"
-	"k8s.io/apimachinery/pkg/util/intstr"
+
 )
 
 // A RoutingTable contains the information needed to route a request.
