@@ -40,13 +40,15 @@ require (
 	github.com/go-sql-driver/mysql v1.4.1
 	github.com/golang/mock v1.3.1
 	github.com/golang/protobuf v1.3.2
+	github.com/googleapis/gnostic v0.3.1 // indirect
 	github.com/labstack/echo v3.3.10+incompatible
 	github.com/labstack/gommon v0.3.0
 	github.com/prometheus/client_golang v1.1.0
 	github.com/spf13/cast v1.3.0
 	github.com/spf13/viper v1.4.0
+	golang.org/x/sync v0.0.0-20190423024810-112230192c58
 	golang.org/x/time v0.0.0-20191024005414-555d28b269f0 // indirect
-	k8s.io/apimachinery v0.0.0-20191030190112-bb31b70367b7 // indirect
+	k8s.io/apimachinery v0.0.0-20191030190112-bb31b70367b7
 	k8s.io/client-go v11.0.0+incompatible
 	k8s.io/utils v0.0.0-20191030222137-2b95a09bc58d // indirect
 )
