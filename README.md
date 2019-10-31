@@ -1,4 +1,4 @@
-#### kubernetes-ingress-controller
+### kubernetes-ingress-controller
 
 Go 实现的 Kubernetes 中通过 Ingress 来暴露服务到集群外部.
 
@@ -9,12 +9,13 @@ Go 实现的 Kubernetes 中通过 Ingress 来暴露服务到集群外部.
 </p>
 
 
-还有很多要完善的我们在路上!
+kubernetes-ingress-controller 还有很多要完善的我会不断的完善和总结!
 
-### kubernetes
+#### kubernetes
 
 觉得此文章不错，支持我的话可以给我star ，:star:！如果有问题可以加我的微信,也可以加入我们的交流群一起交流kubernetes调度技术！
 
 
-### License
+#### License
+
 This is free software distributed under the terms of the MIT license

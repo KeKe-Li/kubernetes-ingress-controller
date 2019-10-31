@@ -1,51 +1,59 @@
 package utils
 
+import "C"
 import (
-	"os"
-	"path"
-	"strings"
-	"sync"
-
+	"context"
 	"github.com/spf13/cast"
 	"github.com/spf13/viper"
+	"os"
+	"strings"
 )
 
-type Viper struct {
-	C *viper.Viper
+type IViper interface {
+	BuildVipers(ctx context.Context, filePath string, fileName ...string)
 }
 
-var multipleViper sync.Map
-var C *viper.Viper
+type viperConfig struct {
+	v *viper.Viper
+}
+
+func NewViper(v *viper.Viper) IViper {
+	return *viperConfig{
+		v: v,
+	}
+}
+
+//var multipleViper sync.Map
 
 // 初始化配置文件
 // filePath 配置文件路径
 // fileName 配置文件名称(不需要文件后缀)
-func NewConfig(filePath string, fileName string) {
-	C = newConfig(filePath, fileName).C
-}
+//func NewConfig(filePath string, fileName string) {
+//	C = newConfig(filePath, fileName).C
+//}
 
-func newConfig(filePath string, fileName string) *Viper {
+//func newConfig(filePath string, fileName string) *Viper {
+//
+//	X := viper.New()
+//
+//	X.SetConfigName(fileName)
+//	//filePath支持相对路径和绝对路径 etc:"/a/b" "b" "./b"
+//	if filePath[:1] != "/" {
+//		X.AddConfigPath(path.Join(GetPath(), filePath))
+//	} else {
+//		X.AddConfigPath(filePath)
+//	}
+//
+//	X.WatchConfig()
+//
+//	// 找到并读取配置文件并且 处理错误读取配置文件
+//	if err := X.ReadInConfig(); err != nil {
+//		panic(err)
+//	}
+//	return &Viper{X}
+//}
 
-	X := viper.New()
-
-	X.SetConfigName(fileName)
-	//filePath支持相对路径和绝对路径 etc:"/a/b" "b" "./b"
-	if filePath[:1] != "/" {
-		X.AddConfigPath(path.Join(GetPath(), filePath))
-	} else {
-		X.AddConfigPath(filePath)
-	}
-
-	X.WatchConfig()
-
-	// 找到并读取配置文件并且 处理错误读取配置文件
-	if err := X.ReadInConfig(); err != nil {
-		panic(err)
-	}
-	return &Viper{X}
-}
-
-func BuildVipers(filePath string, fileName ...string) {
+func (impl *viperConfig) BuildVipers(ctx context.Context, filePath string, fileName ...string) {
 	for _, v := range fileName {
 		_, found := multipleViper.Load(v)
 		if !found { //can not remap
@@ -55,7 +63,7 @@ func BuildVipers(filePath string, fileName ...string) {
 	}
 }
 
-func LoadViperByFilename(filename string) *Viper {
+func (impl *viperConfig) LoadViperByFilename(filename string) *Viper {
 	value, _ := multipleViper.Load(filename)
 	if value == nil {
 		return nil
@@ -65,7 +73,7 @@ func LoadViperByFilename(filename string) *Viper {
 }
 
 // 获取配置文件优先获取环境变量(返回string类型)
-func (V *Viper) GetEnvConfig(key string) string {
+func (impl *viperConfig) GetEnvConfig(key string) string {
 
 	// 转大写 . 转 _ 获取环境变量判断是否存在(存在直接返回,不存在使用viper配置)
 	env := os.Getenv(strings.Replace(strings.ToUpper(key), ".", "_", -1))
@@ -73,11 +81,11 @@ func (V *Viper) GetEnvConfig(key string) string {
 		return env
 	}
 
-	return V.C.GetString(key)
+	return impl.GetString(key)
 }
 
 // 获取配置文件优先获取环境变量(返回int类型)
-func (V *Viper) GetEnvConfigInt(key string) int64 {
+func (impl *viperConfig) GetEnvConfigInt(key string) int64 {
 
 	env := os.Getenv(strings.Replace(strings.ToUpper(key), ".", "_", -1))
 	if env != "" {
@@ -88,7 +96,7 @@ func (V *Viper) GetEnvConfigInt(key string) int64 {
 }
 
 // 获取配置文件优先获取环境变量(返回Float类型)
-func (V *Viper) GetEnvConfigFloat(key string) float64 {
+func (impl *viperConfig) GetEnvConfigFloat(key string) float64 {
 
 	env := os.Getenv(strings.Replace(strings.ToUpper(key), ".", "_", -1))
 	if env != "" {
@@ -99,7 +107,7 @@ func (V *Viper) GetEnvConfigFloat(key string) float64 {
 }
 
 // 获取配置文件优先获取环境变量(返回Bool类型)
-func (V *Viper) GetEnvConfigBool(key string) bool {
+func (impl *viperConfig) GetEnvConfigBool(key string) bool {
 
 	env := os.Getenv(strings.Replace(strings.ToUpper(key), ".", "_", -1))
 	if env != "" {
@@ -109,7 +117,7 @@ func (V *Viper) GetEnvConfigBool(key string) bool {
 	return V.C.GetBool(key)
 }
 
-func (V *Viper) GetEnvConfigStringSlice(key string) []string {
+func (impl *viperConfig) GetEnvConfigStringSlice(key string) []string {
 
 	env := os.Getenv(strings.Replace(strings.ToUpper(key), ".", "_", -1))
 	if env != "" {
@@ -119,12 +127,12 @@ func (V *Viper) GetEnvConfigStringSlice(key string) []string {
 	return V.C.GetStringSlice(key)
 }
 
-func (V *Viper) GetEnvConfigCastInt(key string) int {
+func (impl *viperConfig) GetEnvConfigCastInt(key string) int {
 	return int(V.GetEnvConfigInt(key))
 }
 
 // 获取配置文件优先获取环境变量(返回string类型)
-func GetEnvConfig(key string) string {
+func (impl *viperConfig) GetEnvConfig(key string) string {
 
 	// 转大写 . 转 _ 获取环境变量判断是否存在(存在直接返回,不存在使用viper配置)
 	env := os.Getenv(strings.Replace(strings.ToUpper(key), ".", "_", -1))
@@ -136,7 +144,7 @@ func GetEnvConfig(key string) string {
 }
 
 // 获取配置文件优先获取环境变量(返回int类型)
-func GetEnvConfigInt(key string) int64 {
+func (impl *viperConfig) GetEnvConfigInt(key string) int64 {
 
 	env := os.Getenv(strings.Replace(strings.ToUpper(key), ".", "_", -1))
 	if env != "" {
@@ -147,7 +155,7 @@ func GetEnvConfigInt(key string) int64 {
 }
 
 // 获取配置文件优先获取环境变量(返回Float类型)
-func GetEnvConfigFloat(key string) float64 {
+func (impl *viperConfig) GetEnvConfigFloat(key string) float64 {
 
 	env := os.Getenv(strings.Replace(strings.ToUpper(key), ".", "_", -1))
 	if env != "" {
@@ -158,7 +166,7 @@ func GetEnvConfigFloat(key string) float64 {
 }
 
 // 获取配置文件优先获取环境变量(返回Bool类型)
-func GetEnvConfigBool(key string) bool {
+func (impl *viperConfig) GetEnvConfigBool(key string) bool {
 
 	env := os.Getenv(strings.Replace(strings.ToUpper(key), ".", "_", -1))
 	if env != "" {
@@ -168,7 +176,7 @@ func GetEnvConfigBool(key string) bool {
 	return C.GetBool(key)
 }
 
-func GetEnvConfigStringSlice(key string) []string {
+func (impl *viperConfig) GetEnvConfigStringSlice(key string) []string {
 
 	env := os.Getenv(strings.Replace(strings.ToUpper(key), ".", "_", -1))
 	if env != "" {
@@ -178,6 +186,6 @@ func GetEnvConfigStringSlice(key string) []string {
 	return C.GetStringSlice(key)
 }
 
-func GetEnvConfigCastInt(key string) int {
+func (impl *viperConfig) GetEnvConfigCastInt(key string) int {
 	return int(GetEnvConfigInt(key))
 }
