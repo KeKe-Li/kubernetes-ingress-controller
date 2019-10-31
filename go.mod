@@ -4,8 +4,9 @@ go 1.13
 
 require (
 	github.com/BurntSushi/toml v0.3.1
+	github.com/bep/debounce v1.2.0
 	github.com/chanxuehong/internal v0.0.0-20180430074813-85d6017afbc4 // indirect
-	github.com/chanxuehong/log v0.0.0-20191031091732-f5363720633b
+	github.com/chanxuehong/log v0.0.0-20190928070219-69fffef55d8f
 	github.com/chanxuehong/rand v0.0.0-20180830053958-4b3aff17f488 // indirect
 	github.com/chanxuehong/uuid v0.0.0-20180430073920-75ab5e2d8298 // indirect
 	github.com/gogo/protobuf v1.3.1 // indirect

@@ -6,16 +6,16 @@ import (
 	"fmt"
 	"os"
 
-	"kubernetes-ingress-controller/logic/server"
-	"kubernetes-ingress-controller/logic/watcher"
-	"kubernetes-ingress-controller/common"
+	"github.com/chanxuehong/log"
+
+	"golang.org/x/sync/errgroup"
 
 	"k8s.io/client-go/kubernetes"
 	"k8s.io/client-go/rest"
 
-	"golang.org/x/sync/errgroup"
-
-	"github.com/chanxuehong/log"
+	"kubernetes-ingress-controller/common"
+	"kubernetes-ingress-controller/logic/server"
+	"kubernetes-ingress-controller/logic/watcher"
 )
 
 var (

@@ -8,10 +8,12 @@ import (
 	"regexp"
 	"strings"
 
-	"kubernetes-ingress-controller/logic/watcher"
+	"github.com/chanxuehong/log"
 
 	extensionsv1beta1 "k8s.io/api/extensions/v1beta1"
+	"k8s.io/apimachinery/pkg/util/intstr"
 
+	"kubernetes-ingress-controller/logic/watcher"
 )
 
 // A RoutingTable contains the information needed to route a request.
@@ -61,8 +63,8 @@ func (rt *RoutingTable) init(payload *watcher.Payload) {
 		return
 	}
 	// 根据 payload 数据重新初始化 路由表
-	for _, ingressPayload := range payload.Ingresses {  // 循环所有的 IngressPayload
-		for _, rule := range ingressPayload.Ingress.Spec.Rules {  // 循环 Ingress Rules 规则
+	for _, ingressPayload := range payload.Ingresses { // 循环所有的 IngressPayload
+		for _, rule := range ingressPayload.Ingress.Spec.Rules { // 循环 Ingress Rules 规则
 			m, ok := rt.certificatesByHost[rule.Host]
 			if !ok {
 				m = make(map[string]*tls.Certificate)
@@ -90,7 +92,7 @@ func (rt *RoutingTable) addBackend(ingressPayload watcher.IngressPayload, rule e
 				rt.getServicePort(ingressPayload, backend.ServiceName, backend.ServicePort))
 			if err != nil {
 				// this shouldn't happen
-				log.Error().Err(err).Send()
+				log.ErrorContext(ctx,"newRoutingTableBackend failed","error",err.Error())
 				return
 			}
 			rt.backendsByHost[rule.Host] = append(rt.backendsByHost[rule.Host], rtb)
@@ -101,7 +103,7 @@ func (rt *RoutingTable) addBackend(ingressPayload watcher.IngressPayload, rule e
 			rtb, err := newRoutingTableBackend(path.Path, backend.ServiceName,
 				rt.getServicePort(ingressPayload, backend.ServiceName, backend.ServicePort))
 			if err != nil {
-				log.Error().Err(err).Interface("path", path).Msg("invalid ingress rule path regex")
+				log.ErrorContext(ctx,"newRoutingTableBackend failed","error",err.Error())
 				continue
 			}
 			rt.backendsByHost[rule.Host] = append(rt.backendsByHost[rule.Host], rtb)

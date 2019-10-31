@@ -8,13 +8,12 @@ import (
 	"net/http/httputil"
 	"sync/atomic"
 
-	"kubernetes-ingress-controller/conf"
-	"kubernetes-ingress-controller/common"
-	"kubernetes-ingress-controller/logic/watcher"
-
 	"github.com/chanxuehong/log"
-
 	"golang.org/x/sync/errgroup"
+
+	"kubernetes-ingress-controller/common"
+	"kubernetes-ingress-controller/conf"
+	"kubernetes-ingress-controller/logic/watcher"
 )
 
 // A Server serves HTTP pages.
@@ -84,7 +83,7 @@ func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	// 获取后端的真实服务地址
 	backendURL, err := s.routingTable.Load().(*RoutingTable).GetBackend(r.Host, r.URL.Path)
 	if err != nil {
-		log.ErrorContext(ctx,"GetBackend failed","error",err.Error())
+		log.ErrorContext(ctx, "GetBackend failed", "error", err.Error())
 		return
 	}
 	// 使用 NewSingleHostReverseProxy 进行代理请求

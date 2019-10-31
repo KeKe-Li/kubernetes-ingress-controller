@@ -6,9 +6,11 @@ import (
 	"sync"
 	"time"
 
+	"github.com/bep/debounce"
 	"github.com/chanxuehong/log"
 
 	extensionsv1beta1 "k8s.io/api/extensions/v1beta1"
+
 	"k8s.io/apimachinery/pkg/labels"
 	"k8s.io/client-go/informers"
 	"k8s.io/client-go/kubernetes"
@@ -140,7 +142,7 @@ func (impl *watcher) Watcher(ctx context.Context) error {
 			}
 		}
 
-		w.onChange(payload)
+		impl.onChange(payload)
 	}
 
 	debounced := debounce.New(time.Second)
